@@ -1,0 +1,11 @@
+#!/bin/bash
+DOMAIN=
+WANIP=$(curl icanhazip.com)
+FTPUSER=
+FTPPASS=
+FTPSERVER=
+FTPREMOTEPATH=/
+FILE=~/ipaddress
+echo "$DOMAIN -> $WANIP" > $FILE
+ncftpput -u $FTPUSER -p $FTPPASS $FTPSERVER $FTPREMOTEPATH $FILE
+rm $FILE

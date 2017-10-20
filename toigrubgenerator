@@ -1,0 +1,7 @@
+#!/bin/sh
+MB=4000
+echo TuxOnIce > /suspend_file
+dd if=/dev/zero bs=1M count=$MB >> /suspend_file
+echo /suspend_file > /sys/power/tuxonice/file/target
+header=$(cat /sys/power/tuxonice/resume)
+echo "resume=file:$header"

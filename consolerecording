@@ -1,0 +1,2 @@
+#!/bin/sh
+ffmpeg -fflags +genpts -f pulse -i default -thread_queue_size 512 -f v4l2 -i /dev/video0 -acodec mp3 -vcodec libx264 -pix_fmt yuv420p .video.avi

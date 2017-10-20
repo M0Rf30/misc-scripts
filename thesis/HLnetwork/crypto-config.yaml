@@ -1,0 +1,70 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# ------------------------------------------------------------------------------
+# "OrdererOrgs" - Definizione delle organizzazioni che gestiscono i nodi orderer
+
+OrdererOrgs:
+  # ---------------------------------------------------------------------------
+  # Orderer
+  # ---------------------------------------------------------------------------
+  - Name: Orderer
+    Domain: iot.net
+    # ---------------------------------------------------------------------------
+    # "Specs" - Guarda PeerOrgs qui sotto per una descrizione completa
+    # ---------------------------------------------------------------------------
+    Specs:
+      - Hostname: orderer
+# ---------------------------------------------------------------------------
+# "PeerOrgs" - Definizione delle organizzazioni che gestiscono i nodi peer tradizionali
+# ---------------------------------------------------------------------------
+PeerOrgs:
+  # ---------------------------------------------------------------------------
+  # Acme organization per peer
+  # ---------------------------------------------------------------------------
+  - Name: Acme
+    Domain: acme.iot.net
+    # ---------------------------------------------------------------------------
+    # "Specs"
+    # ---------------------------------------------------------------------------
+    # Uncomment this section to enable the explicit definition of hosts in your
+    # configuration.  Most users will want to use Template, below
+    #
+    # Specs is an array of Spec entries.  Each Spec entry consists of two fields:
+    #   - Hostname:   (Required) The desired hostname, sans the domain.
+    #   - CommonName: (Optional) Specifies the template or explicit override for
+    #                 the CN.  By default, this is the template:
+    #
+    #                              "{{.Hostname}}.{{.Domain}}"
+    #
+    #                 which obtains its values from the Spec.Hostname and
+    #                 Org.Domain, respectively.
+    # ---------------------------------------------------------------------------
+    # Specs:
+    #   - Hostname: foo # implicitly "foo.org1.example.com"
+    #     CommonName: foo27.org5.example.com # overrides Hostname-based FQDN set above
+    #   - Hostname: bar
+    #   - Hostname: baz
+    #
+    # "Template"
+    # Permette la definizione di 1 o più host creati sequenzialmente da un template.
+    # Di predefinito, tutto ciò apparirà come "peer%d" da 0 a Count-1. (come nei vettori in C)
+    # Puoi sovrascrivere il numero dei nodi (Count), l'indice da cui contare (Start)
+    # o il template usato per costruire il nome (Hostname).
+    #
+    # Nota: Template e Specs non sono mutualmente esclusivi. Dovrai definire entrambe le sezioni
+    # e le aggregazioni organizzazioni-nodi verranno create. Attento alle collisioni dei nomi
+
+    Template:
+      Count: 2
+      # Start: 5
+      # Hostname: {{.Prefix}}{{.Index}} # default
+    # ---------------------------------------------------------------------------
+    # "Users"
+    # ---------------------------------------------------------------------------
+    # Count: Il numero di account utente oltre ad Admin
+    # ---------------------------------------------------------------------------
+    Users:
+      Count: 1

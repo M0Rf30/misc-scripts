@@ -1,0 +1,67 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+networks:
+  byfn:
+
+services:
+
+  orderer.iot.net:
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: orderer.iot.net
+    container_name: orderer.iot.net
+    networks:
+      - byfn
+
+  peer0.acme.iot.net:
+    container_name: peer0.acme.iot.net
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.acme.iot.net
+    networks:
+      - byfn
+
+  peer1.acme.iot.net:
+    container_name: peer1.acme.iot.net
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.acme.iot.net
+    networks:
+      - byfn
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.acme.iot.net:7051
+      - CORE_PEER_LOCALMSPID=acmeMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/acme.iot.net/peers/peer0.acme.iot.net/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/acme.iot.net/peers/peer0.acme.iot.net/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/acme.iot.net/peers/peer0.acme.iot.net/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/acme.iot.net/users/Admin@acme.iot.net/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash -c './scripts/script.sh ${CHANNEL_NAME} ${DELAY}; sleep $TIMEOUT'
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/github.com/hyperledger/fabric/examples/chaincode/go
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    depends_on:
+      - orderer.iot.net
+      - peer0.acme.iot.net
+      - peer1.acme.iot.net
+    networks:
+      - byfn
+
