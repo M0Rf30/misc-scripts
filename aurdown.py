@@ -13,5 +13,5 @@ values = json.load(urllib.urlopen(base_url))
 
 for result in values['results']:
 	name = result['Name']
-	os.system("yaourt -G %s" % name)
+	os.system("cower -df %s" % name)
 
